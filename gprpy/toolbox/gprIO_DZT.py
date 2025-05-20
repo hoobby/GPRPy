@@ -102,6 +102,18 @@ def readdzt(filename):
     # number of channels
     rh_nchan = struct.unpack('h',fid.read(2))[0] # Pos 52
 
+    # head gain
+    rh_offset_to_range_gain = struct.unpack('h',fid.read(2))[0] # Pos 54
+    rh_size_of_range_gain = struct.unpack('h',fid.read(2))[0]   # Pos 56
+
+    # read head gain
+    if rh_size_of_range_gain > 0:
+        fid.seek(rh_offset_to_range_gain) 
+        no_rg_breaks = struct.unpack('h',fid.read(2))[0]
+        range_gain = struct.unpack('f'*no_rg_breaks, fid.read(4*no_rg_breaks))
+        info["rh_no_rg_breaks"] = no_rg_breaks
+        info["rh_range_gain"] = range_gain
+
     # ... and more stuff we don't really need
 
     fid.close()
